@@ -62,7 +62,7 @@ class Account {
         let notFound=true;
         shopGoods.forEach((item)=>{
             let findedProduct=item['products'].find((item)=>item['product_name']===name);
-            if(typeof findedProduct!=='undefined'){
+            if(findedProduct){
                 this.displayProduct(findedProduct,item['store_name']);
                 notFound=false;
             }
@@ -103,7 +103,7 @@ class User extends Account {
     addToCart(productName) {
         shopGoods.forEach((item) => {
             let findedProduct = item.products.find((item) => item.product_name === productName);
-            if (typeof findedProduct !== 'undefined') {
+            if (findedProduct) {
                 this.cart.push({...findedProduct,'shopName': item.store_name});
             }
         });
@@ -127,16 +127,15 @@ class Admin extends Account {
     }
     redactPrice(productName, newPrice) {
         shopGoods.forEach((item) => {
-            item.products.forEach((item) => {
-                if (item.product_name === productName)
-                    item.product_price = newPrice;
-            })
+            let foundStore=item['products'].find(item=>item['product_name']===productName);
+            if(foundStore)
+            foundStore['product_price']=newPrice;
         });
     }
     addGood(store, productInfo) {
         const [name, description, price] = productInfo.split('/');
-        const foundStore = shopGoods.findIndex(s => s.store_name === store);
-        foundStore ?  shopGoods[foundStore].products.push({ 'product_name': name, 'product_description': description, 'product_price': +price }) : console.log('You wrote wrong store name');
+        const foundStore = shopGoods.find(s => s.store_name === store);
+        foundStore ?  foundStore.products.push({ 'product_name': name, 'product_description': description, 'product_price': +price }) : console.log('You wrote wrong store name');
     }
 }
 class AccountList {
